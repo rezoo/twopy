@@ -1,2 +1,6 @@
+# .gitignore
+
+# untrack temporary files and directory.
 twopy.egg-info
 *.pyc
+*.swp

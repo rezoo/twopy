@@ -15,14 +15,14 @@ def make_subject_url(url):
 
 def parse_board(string):
     thread_expressions = re.compile(
-        r"^(?P<dat>\d+\.dat)<>(?P<title>.*) \((?P<res>\d*)\)$")
+        r"^(?P<dat>\d+\.dat)<>(?P<title>.*) \((?P<n_comments>\d*)\)$")
     results = []
     for thread_string in string.split("\n"):
         thread_data = thread_expressions.search(thread_string)
         if thread_data:
             results.append({
                 "title": thread_data.group("title"),
-                "res": int(thread_data.group("res")),
+                "n_comments": int(thread_data.group("n_comments")),
                 "dat": thread_data.group("dat"),
             })
         elif len(thread_string) != 0:

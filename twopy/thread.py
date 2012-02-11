@@ -9,14 +9,6 @@ from comment import Comment
 from exeptions import HttpStatusError, RegexError
 
 
-def thread_generator(dat_string):
-    for column in dat_string.split("\n"):
-        if len(column) == 0:
-            return
-        result = column.split("<>")
-        yield (result[0], result[1], result[2], result[3])
-
-
 def make_title_from_dat(dat_string):
     tmp_expressions = re.compile(r"^(?P<column>.+?)\n")
     result = tmp_expressions.search(dat_string)

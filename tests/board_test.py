@@ -23,10 +23,10 @@ class TestBoardModule(unittest.TestCase):
             self.assertEqual(len(result), 378)
 
             self.assertEqual(result[0]["dat"], u"1328886973.dat")
-            self.assertEqual(result[0]["res"], 33)
+            self.assertEqual(result[0]["n_comments"], 33)
             self.assertEqual(result[0]["title"],
                 u"【ﾋｬｯﾊｰ】 NATO軍、タリバンと間違えうっかり子供8人をぶち殺す")
             self.assertEqual(result[9]["dat"], u"9241201701.dat")
-            self.assertEqual(result[9]["res"], 10)
+            self.assertEqual(result[9]["n_comments"], 10)
             self.assertEqual(result[9]["title"],
                 u"ステマと言われて困っています。- ２ちゃんねる知恵袋")

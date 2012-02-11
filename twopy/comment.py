@@ -13,7 +13,7 @@ class Comment:
     __date_id_expressions = re.compile(r" ID:")
     __trip_expressions = re.compile(u"◆(?P<trip>\\w+)$")
     __datetime_expressions = re.compile(
-        (r"(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})\(.*\) "
+        (r"(?P<year>\d{2,4})/(?P<month>\d{2})/(?P<day>\d{2})(\(.*\)|) "
           "(?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2})(\.(?P<csec>\d+)|)"))
 
     def parse_body(self, string):
@@ -37,7 +37,7 @@ class Comment:
     def parse_others(self, string):
         result = Comment.__date_id_expressions.search(string)
         if result:
-            return (self.parse_datetime(string[:result.start()-1]),
+            return (self.parse_datetime(string[:result.start()]),
                     string[result.end():])
         else:
             return (self.parse_datetime(string), "")

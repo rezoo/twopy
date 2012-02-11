@@ -65,7 +65,7 @@ class Thread:
         self._title = make_title_from_dat(dat_string)
         self._comments = []
         for column in dat_string.split("\n"):
-            if column == ""
+            if column == "":
                 continue
             self._comments.append(Comment(column)) 
 
@@ -75,13 +75,14 @@ class Thread:
 
     def get_comments(self):
         return self._comments
-    comments = property(title)
+    comments = property(get_comments)
 
     def __len__(self):
         return len(self._comments)
 
     def __iter__(self):
-        return self._comments
+        for comment in self._comments:
+            yield comment
     
     def __getitem__(self, key):
         if type(key) is int:

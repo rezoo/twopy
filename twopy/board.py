@@ -39,6 +39,7 @@ def retrieve_board(board_url, user=None):
     response = my_user.urlopen(subject_url, gzip=False)
     if response.code == 200:
         retrieved_string = unicode(response.read(), "Shift_JIS", "ignore")
+        print type(retrieved_string)
         return parse_board(retrieved_string)
     else:
         message = "HTTP status is invalid: " + str(response.code)

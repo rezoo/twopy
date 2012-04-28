@@ -38,24 +38,6 @@ def make_dat_url(board_url, dat_name):
     return board_url_fixed + "dat/" + dat_name
 
 
-def parse_dat(dat_string):
-    if not isinstance(dat_string, unicode):
-        raise TypeError("unsupported type:" + str(type(dat_string)))
-
-    last_retrieved = datetime.datetime.utcnow()
-    comments = []
-    for column in dat_string.split("\n"):
-        if column == "":
-            continue
-        comments.append(Comment(column))
-    result = {
-        "title": make_title_from_dat(dat_string),
-        "comments": comments,
-        "last_retrieved": last_retrieved,
-    }
-    return result
-
-
 def retrieve_thread(board_url, dat_name, user=None):
     my_user = user if user else make_anonymous_user()
     target_url = make_dat_url(board_url, dat_name)
@@ -65,7 +47,40 @@ def retrieve_thread(board_url, dat_name, user=None):
         zipped_IO = StringIO.StringIO(response.read())
         unzipped_string = gzip.GzipFile(fileobj=zipped_IO).read()
         dat_string = unicode(unzipped_string, "Shift_JIS", "replace")
-        return parse_dat(dat_string)
+        return Thread(dat_string)
     else:
         message = "HTTP status is invalid: " + str(response.code)
         raise HttpStatusError(message, response)
+
+
+class Thread:
+    def __init__(self, dat_string):
+        self._title = make_title_from_dat(dat_string)
+        self._comments = []
+        for column in dat_string.split("\n"):
+            if column == "":
+                continue
+            self._comments.append(Comment(column)) 
+
+    def get_title(self):
+        return self._title
+    title = property(get_title)
+
+    def get_comments(self):
+        return self._comments
+    comments = property(get_comments)
+
+    def __len__(self):
+        return len(self._comments)
+
+    def __iter__(self):
+        for comment in self._comments:
+            yield comment
+    
+    def __getitem__(self, key):
+        if type(key) is int:
+            return self._comments[key - 1]
+        elif type(key) is slice:
+            return self._comments[slice(key.start - 1, key.stop, key.step)]
+        else:
+            raise TypeError("The type %s is not supported." % repr(type(key)))

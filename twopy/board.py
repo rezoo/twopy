@@ -17,14 +17,14 @@ def parse_board(string):
     if not isinstance(string, unicode):
         raise TypeError("unsupported string type:" + str(type(string)))
     thread_expressions = re.compile(
-        r"^(?P<dat>\d+\.dat)<>(?P<title>.*) \((?P<res>\d*)\)$")
+        r"^(?P<dat>\d+\.dat)<>(?P<title>.*) \((?P<n_comments>\d*)\)$")
     results = []
     for thread_string in string.split("\n"):
         thread_data = thread_expressions.search(thread_string)
         if thread_data:
             results.append({
                 "title": thread_data.group("title"),
-                "res": int(thread_data.group("res")),
+                "n_comments": int(thread_data.group("n_comments")),
                 "dat": thread_data.group("dat"),
             })
         elif len(thread_string) != 0:
@@ -41,6 +41,7 @@ def retrieve_board(board_url, user=None):
     response = my_user.urlopen(subject_url, gzip=False)
     if response.code == 200:
         retrieved_string = unicode(response.read(), "Shift_JIS", "ignore")
+        print type(retrieved_string)
         return parse_board(retrieved_string)
     else:
         message = "HTTP status is invalid: " + str(response.code)

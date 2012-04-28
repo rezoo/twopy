@@ -2,6 +2,7 @@
 
 import os
 import unittest
+import datetime
 from twopy.thread import make_dat_url, make_thread_url, \
                          make_title_from_dat, Thread
 
@@ -39,4 +40,5 @@ class TestThreadModule(unittest.TestCase):
         self.assertEqual(len([a for a in t]), 10)
         self.assertEqual(len(t[1:10]), 10)
         self.assertEqual(t.title, u"ステマと言われて困っています。- ２ちゃんねる知恵袋")
-        self.assertEqual(type(t.comments), list)
+        self.assertTrue(isinstance(t.comments, list))
+        self.assertTrue(isinstance(t.last_retrieved, datetime.datetime))

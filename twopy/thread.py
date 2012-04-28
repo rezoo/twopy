@@ -55,6 +55,7 @@ def retrieve_thread(board_url, dat_name, user=None):
 
 class Thread:
     def __init__(self, dat_string):
+        self._last_retrieved = datetime.datetime.utcnow()
         self._title = make_title_from_dat(dat_string)
         self._comments = []
         for column in dat_string.split("\n"):
@@ -69,6 +70,10 @@ class Thread:
     def get_comments(self):
         return self._comments
     comments = property(get_comments)
+
+    def get_last_retrieved(self):
+        return self._last_retrieved
+    last_retrieved = property(get_last_retrieved)
 
     def __len__(self):
         return len(self._comments)

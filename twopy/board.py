@@ -14,6 +14,8 @@ def make_subject_url(url):
 
 
 def parse_board(string):
+    if not isinstance(string, unicode):
+        raise TypeError("unsupported string type:" + str(type(string)))
     thread_expressions = re.compile(
         r"^(?P<dat>\d+\.dat)<>(?P<title>.*) \((?P<res>\d*)\)$")
     results = []

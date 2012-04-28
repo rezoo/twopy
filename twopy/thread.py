@@ -4,17 +4,10 @@
 import re
 import StringIO
 import gzip
+import datetime
 from user import make_anonymous_user
 from comment import Comment
 from exeptions import HttpStatusError, RegexError
-
-
-def thread_generator(dat_string):
-    for column in dat_string.split("\n"):
-        if len(column) == 0:
-            return
-        result = column.split("<>")
-        yield (result[0], result[1], result[2], result[3])
 
 
 def make_title_from_dat(dat_string):
@@ -45,6 +38,24 @@ def make_dat_url(board_url, dat_name):
     return board_url_fixed + "dat/" + dat_name
 
 
+def parse_dat(dat_string):
+    if not isinstance(dat_string, unicode):
+        raise TypeError("unsupported type:" + str(type(dat_string)))
+
+    last_retrieved = datetime.datetime.utcnow()
+    comments = []
+    for column in dat_string.split("\n"):
+        if column == "":
+            continue
+        comments.append(Comment(column))
+    result = {
+        "title": make_title_from_dat(dat_string),
+        "comments": comments,
+        "last_retrieved": last_retrieved,
+    }
+    return result
+
+
 def retrieve_thread(board_url, dat_name, user=None):
     my_user = user if user else make_anonymous_user()
     target_url = make_dat_url(board_url, dat_name)
@@ -54,12 +65,7 @@ def retrieve_thread(board_url, dat_name, user=None):
         zipped_IO = StringIO.StringIO(response.read())
         unzipped_string = gzip.GzipFile(fileobj=zipped_IO).read()
         dat_string = unicode(unzipped_string, "Shift_JIS", "replace")
-        result = []
-        for column in dat_string.split("\n"):
-            if column == "":
-                continue
-            result.append(Comment(column))
-        return result
+        return parse_dat(dat_string)
     else:
         message = "HTTP status is invalid: " + str(response.code)
         raise HttpStatusError(message, response)
